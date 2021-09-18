@@ -1,4 +1,7 @@
 const gameContainer = document.getElementById("game");
+let count = 0;
+let card1 = null;
+let card2 = null;
 
 const COLORS = [
   "red",
@@ -59,22 +62,34 @@ function createDivsForColors(colorArray) {
 }
 
 // TODO: Implement this function!
-function handleCardClick(e) {
+function match(e) {
+  let selected = document.querySelectorAll('.selected');
+  selected.forEach(function (val) {
+    val.classList.add('match');
+  })
+}
 
+function handleCardClick(e)  {
   let pickCard = e.target;
-  pickCard.style.backgroundColor = pickCard.classList;
 
-  let preClick = false;
-  let card1 = null;
-  let card2 = null;
-  
-  if (!card1 || !card2) {
-    pickCard.classList.add("selected");
-    
+  if (count < 2) {
+    count ++;
+      if (count === 1) {
+        pickCard.style.backgroundColor = pickCard.classList[0];
+        card1 = pickCard.classList.add('selected');
+      } else {
+        pickCard.style.backgroundColor = pickCard.classList[0];
+        card2 = pickCard.classList.add('selected');
+      }
+ 
+// If both guesses are not empty
+      if (card1 !== "" && card2 !== "") {
+
+        if (card1 === card2) {
+          match();
+        }
+      }
   }
-  
-  if (card1 && card2)
-
 
   // you can use event.target to see which element was clicked
   console.log("you just clicked", e.target);
