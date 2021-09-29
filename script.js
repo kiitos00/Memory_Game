@@ -1,7 +1,8 @@
 const gameContainer = document.getElementById("game");
-let count = 0;
 let card1 = null;
 let card2 = null;
+let selectedCard = 0;
+let noPick = false;
 
 const COLORS = [
   "red",
@@ -62,37 +63,46 @@ function createDivsForColors(colorArray) {
 }
 
 // TODO: Implement this function!
-function match(e) {
-  let selected = document.querySelectorAll('.selected');
-  selected.forEach(function (val) {
-    val.classList.add('match');
-  })
-}
-
 function handleCardClick(e)  {
-  let pickCard = e.target;
+  if (noPick) return;
+  if (e.target.classList.contains("selected")) return;
 
-  if (count < 2) {
-    count ++;
-      if (count === 1) {
-        pickCard.style.backgroundColor = pickCard.classList[0];
-        card1 = pickCard.classList.add('selected');
-      } else {
-        pickCard.style.backgroundColor = pickCard.classList[0];
-        card2 = pickCard.classList.add('selected');
-      }
- 
-// If both guesses are not empty
-      if (card1 !== "" && card2 !== "") {
+  let currentCard = e.target;
+  currentCard.style.backgroundColor = currentCard.classList[0];
 
-        if (card1 === card2) {
-          match();
-        }
-      }
+  if (!card1 || !card2) {
+    currentCard.classList.add("selected");
+    card1 = card1 || currentCard;
+    card2 = currentCard === card1 ? null : currentCard;
   }
 
-  // you can use event.target to see which element was clicked
-  console.log("you just clicked", e.target);
+  if (card1 && card2) {
+    noPick = true;
+
+    let selectedCard1 = card1.className;
+    let selectedCard2 = card2.className;
+
+    if (selectedCard1 === selectedCard2) {
+      selectedCard += 2;
+      card1.removeEventListener("click", handleCardClick);
+      card2.removeEventListener("click", handleCardClick);
+      card1 = null;
+      card2 = null;
+      noPick = false;
+    } else {
+      setTimeout(function() {
+        card1.style.backgroundColor = "";
+        card2.style.backgroundColor = "";
+        card1.classList.remove("selected");
+        card2.classList.remove("selected");
+        card1 = null;
+        card2 = null;
+        noPick = false;
+      }, 1000);
+    }
+  }
+
+  if (selectedCard === COLORS.length) alert("game over!");
 }
 
 // when the DOM loads
